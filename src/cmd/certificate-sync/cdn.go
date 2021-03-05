@@ -22,13 +22,11 @@ func main() {
 
 	credential,cpf := myUtil.GetCredential(config.SecretId,config.SecretKey)
 	cpf.HttpProfile.Endpoint = "cdn.tencentcloudapi.com"
-
-	params := config.GetCertItem(group)
-
 	client, _ := cdn.NewClient(credential, "", cpf)
 
 	request := cdn.NewUpdateDomainConfigRequest()
 
+	params := config.GetCertRequestParam(group)
 	err := request.FromJsonString(params)
 	if err != nil {
 		panic(err)

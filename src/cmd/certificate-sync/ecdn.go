@@ -23,7 +23,7 @@ func main() {
 	credential,cpf := myUtil.GetCredential(config.SecretId,config.SecretKey)
 	cpf.HttpProfile.Endpoint = "ecdn.tencentcloudapi.com"
 
-	params := config.GetCertItem(group)
+	params := config.GetCertRequestParam(group)
 
 	client, _ := cdn.NewClient(credential, "", cpf)
 

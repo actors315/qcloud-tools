@@ -11,3 +11,7 @@ certificates:
     domain: "*.lingyin99.com"
     publicKeyPath: "/usr/local/public.cer"
     privateKeyPath: "/usr/local/private.pem"
+
+cvms:
+  test:
+    region: "ap-seoul"

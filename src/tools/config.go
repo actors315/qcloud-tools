@@ -15,16 +15,33 @@ type CertItem struct {
 }
 
 type CvmItem struct {
-
+	Region string `yaml:"region"`
 }
 
 type QcloudConfig struct {
-	SecretId       string `yaml:"secretId"`
-	SecretKey      string `yaml:"secretKey"`
+	SecretId     string              `yaml:"secretId"`
+	SecretKey    string              `yaml:"secretKey"`
 	Certificates map[string]CertItem `yaml:"certificates"`
+	Cvms         map[string]CvmItem  `yaml:"cvms"`
 }
 
-func (config *QcloudConfig) GetCertItem(group string) string  {
+func (config *QcloudConfig) GetCvmItem(group string) CvmItem {
+	cvmItem,found := config.Cvms[group]
+	if !found {
+		panic("配置不存在")
+	}
+	return cvmItem
+}
+
+func (config *QcloudConfig) GetCertItem(group string) CertItem {
+	certItem,found := config.Certificates[group]
+	if !found {
+		panic("配置不存在")
+	}
+	return certItem
+}
+
+func (config *QcloudConfig) GetCertRequestParam(group string) string  {
 
 	certItem,found := config.Certificates[group]
 	if !found {
