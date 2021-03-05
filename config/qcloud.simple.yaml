@@ -1,0 +1,13 @@
+secretId: secretId
+secretKey: secretKey
+
+certificates:
+  test:
+    domain: "www.test.com"
+    publicKeyPath: "/usr/local/public.cer"
+    privateKeyPath: "/usr/local/private.pem"
+    alias: test
+  wildcard:
+    domain: "*.lingyin99.com"
+    publicKeyPath: "/usr/local/public.cer"
+    privateKeyPath: "/usr/local/private.pem"
