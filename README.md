@@ -58,4 +58,11 @@ make cert-sync-ecdn
 
 ## 重建 cvm
 
-以过期的 cvm 中创建镜像，以该镜像重建新机器
+以过期的 cvm 创建镜像，以该镜像重建新机器。当前只是简单用系统来判断有没有重建过。  
+
+```
+# 编译可执行文件
+make cvm-renew
+
+{DIR}/bin/cvm-renew --group=test
+```
