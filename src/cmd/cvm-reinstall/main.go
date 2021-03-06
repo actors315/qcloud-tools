@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/errors"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
+	"qcloud-tools/src/cvmVo"
 	"qcloud-tools/src/tools"
 )
 
@@ -13,8 +13,8 @@ func main() {
 	var group string
 	var file string
 
-	flag.StringVar(&group, "group", "test", "分组")
-	flag.StringVar(&file, "config", "E:\\go\\cert-syn-tencent-cloud\\config\\qcloud.yaml", "配置文件地址")
+	flag.StringVar(&group, "group", "tiyan", "分组")
+	flag.StringVar(&file, "config", "", "配置文件地址")
 	flag.Parse()
 
 	myUtil := new(tools.Utils)
@@ -26,15 +26,16 @@ func main() {
 
 	client, _ := cvm.NewClient(credential, cvmItem.Region, cpf)
 
-	request := cvm.NewDescribeInstancesRequest()
-	response, err := client.DescribeInstances(request)
-	if _, ok := err.(*errors.TencentCloudSDKError); ok {
-		fmt.Printf("An API error has returned: %s", err)
+	reinstall := new(cvmVo.ReinstallInfo)
+
+	check := reinstall.CheckReinstall(client)
+
+	if !check {
+		fmt.Println("不重建")
 		return
 	}
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("%s", response.ToJsonString())
 
+	reinstall.Reinstall(client)
+
+	cvmVo.ClearExpiredImage(client)
 }

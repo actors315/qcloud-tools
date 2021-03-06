@@ -18,6 +18,7 @@ certificates:
     publicKeyPath: "/usr/local/public.cer"
     privateKeyPath: "/usr/local/private.pem"
     alias: test
+
 ```
 
 默认可执行文件是在 bin 目录，配置文件在 config 目录。否则执行时需要手动指定配置文件路径 `--config={dir}/qcloud.yaml`
