@@ -1,0 +1,4 @@
+servers:
+  test:
+    listen: ":9999"
+    host: "localhost"
