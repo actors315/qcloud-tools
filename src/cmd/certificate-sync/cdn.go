@@ -17,11 +17,10 @@ func main() {
 	flag.StringVar(&file, "config", "", "配置文件地址")
 	flag.Parse()
 
-	myUtil := new(tools.Utils)
-	config := myUtil.GetConfig(file)
-
-	credential,cpf := myUtil.GetCredential(config.SecretId,config.SecretKey)
+	config := tools.NewQcloudConfig(file)
+	credential,cpf := tools.GetCredential(config.SecretId,config.SecretKey)
 	cpf.HttpProfile.Endpoint = "cdn.tencentcloudapi.com"
+
 	client, _ := cdn.NewClient(credential, "", cpf)
 
 	request := cdn.NewUpdateDomainConfigRequest()

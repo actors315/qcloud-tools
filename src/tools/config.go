@@ -2,8 +2,12 @@ package tools
 
 import (
 	"fmt"
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -18,14 +22,40 @@ type CvmItem struct {
 	Region string `yaml:"region"`
 }
 
-type QcloudConfig struct {
+type qcloudConfig struct {
 	SecretId     string              `yaml:"secretId"`
 	SecretKey    string              `yaml:"secretKey"`
 	Certificates map[string]CertItem `yaml:"certificates"`
 	Cvms         map[string]CvmItem  `yaml:"cvms"`
 }
 
-func (config *QcloudConfig) GetCvmItem(group string) CvmItem {
+var config *qcloudConfig
+var once sync.Once
+
+func NewQcloudConfig(file string) *qcloudConfig {
+	if file == "" {
+		rootDir, _ := os.Executable()
+		rootDir = filepath.Dir(rootDir)
+		file = rootDir + "/../config/qcloud.yaml"
+	}
+
+	once.Do(func() {
+		content, err := ioutil.ReadFile(file)
+		if err != nil {
+			fmt.Printf("failed to read yaml file : %v\n", err)
+			panic(err)
+		}
+
+		err = yaml.Unmarshal(content, &config)
+		if err != nil {
+			panic(err)
+		}
+	})
+
+	return config
+}
+
+func (config *qcloudConfig) GetCvmItem(group string) CvmItem {
 	cvmItem,found := config.Cvms[group]
 	if !found {
 		panic("配置不存在")
@@ -33,7 +63,7 @@ func (config *QcloudConfig) GetCvmItem(group string) CvmItem {
 	return cvmItem
 }
 
-func (config *QcloudConfig) GetCertItem(group string) CertItem {
+func (config *qcloudConfig) GetCertItem(group string) CertItem {
 	certItem,found := config.Certificates[group]
 	if !found {
 		panic("配置不存在")
@@ -41,7 +71,7 @@ func (config *QcloudConfig) GetCertItem(group string) CertItem {
 	return certItem
 }
 
-func (config *QcloudConfig) GetCertRequestParam(group string) string  {
+func (config *qcloudConfig) GetCertRequestParam(group string) string  {
 
 	certItem,found := config.Certificates[group]
 	if !found {

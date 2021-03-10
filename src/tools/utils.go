@@ -1,15 +1,11 @@
 package tools
 
 import (
-	"fmt"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
-	"gopkg.in/yaml.v2"
-	"io/ioutil"
-	"os"
-	"path/filepath"
 )
 
+/*
 type Utils struct {
 	config *QcloudConfig
 }
@@ -42,9 +38,9 @@ func (u *Utils) GetConfig(file string) *QcloudConfig {
 
 	return u.config
 
-}
+}*/
 
-func (u *Utils) GetCredential(secretId string,secretKey string) (*common.Credential,*profile.ClientProfile) {
+func GetCredential(secretId string,secretKey string) (*common.Credential,*profile.ClientProfile) {
 	credential := common.NewCredential(
 		secretId,
 		secretKey,
