@@ -10,19 +10,11 @@ import (
 	"qcloud-tools/src/tools"
 )
 
-type CredentialItem struct {
-	File string
-	Group string
-}
+func updateCdnCredential(credential *common.Credential, cpf *profile.ClientProfile, params string) {
 
-func (item *CredentialItem) updateCdnCredential(credential *common.Credential,cpf *profile.ClientProfile) {
 	client, _ := cdn.NewClient(credential, "", cpf)
 	request := cdn.NewUpdateDomainConfigRequest()
 
-	config := tools.NewQcloudConfig(item.File)
-
-	params := config.GetCertRequestParam(item.Group)
-
 	err := request.FromJsonString(params)
 	if err != nil {
 		panic(err)
@@ -38,15 +30,11 @@ func (item *CredentialItem) updateCdnCredential(credential *common.Credential,cp
 	fmt.Printf("%s \n", response.ToJsonString())
 }
 
-func (item *CredentialItem) updateEcdnCredential(credential *common.Credential, cpf *profile.ClientProfile) {
-	client, _ := ecdn.NewClient(credential, "", cpf)
+func updateEcdnCredential(credential *common.Credential, cpf *profile.ClientProfile, params string) {
 
+	client, _ := ecdn.NewClient(credential, "", cpf)
 	request := ecdn.NewUpdateDomainConfigRequest()
 
-	config := tools.NewQcloudConfig(item.File)
-
-	params := config.GetCertRequestParam(item.Group)
-
 	err := request.FromJsonString(params)
 	if err != nil {
 		panic(err)
@@ -62,24 +50,25 @@ func (item *CredentialItem) updateEcdnCredential(credential *common.Credential, 
 	fmt.Printf("%s \n", response.ToJsonString())
 }
 
-func (item *CredentialItem) UpdateCredential() {
-	config := tools.NewQcloudConfig(item.File)
+func UpdateCredential(file string, group string) {
+	config := tools.NewQcloudConfig(file)
 
-	certItem, found := config.Certificates[item.Group]
+	certItem, found := config.Certificates[group]
 	if !found {
-		fmt.Print("配置不存在")
-		return
+		panic("配置不存在")
 	}
 
-	credential,cpf := tools.GetCredential(config.SecretId,config.SecretKey)
+	credential, cpf := tools.GetCredential(config.SecretId, config.SecretKey)
+
+	params := config.GetCertRequestParam(group)
 
 	switch certItem.Product {
-		case "ecdn":
-			cpf.HttpProfile.Endpoint = "ecdn.tencentcloudapi.com"
-			item.updateEcdnCredential(credential,cpf)
-		default:
-			cpf.HttpProfile.Endpoint = "cdn.tencentcloudapi.com"
-			item.updateCdnCredential(credential,cpf)
+	case "ecdn":
+		cpf.HttpProfile.Endpoint = "ecdn.tencentcloudapi.com"
+		updateEcdnCredential(credential, cpf, params)
+	default:
+		cpf.HttpProfile.Endpoint = "cdn.tencentcloudapi.com"
+		updateCdnCredential(credential, cpf, params)
 	}
 
 }

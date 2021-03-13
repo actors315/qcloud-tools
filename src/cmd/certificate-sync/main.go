@@ -14,9 +14,6 @@ func main() {
 	flag.StringVar(&file, "config", "", "配置文件地址")
 	flag.Parse()
 
-	config := new(cvmVo.CredentialItem)
-	config.File = file
-	config.Group = group
-	config.UpdateCredential()
+	cvmVo.UpdateCredential(file,group)
 
 }
