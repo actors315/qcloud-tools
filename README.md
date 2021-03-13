@@ -23,38 +23,27 @@ certificates:
 
 默认可执行文件是在 bin 目录，配置文件在 config 目录。否则执行时需要手动指定配置文件路径 `--config={dir}/qcloud.yaml`
 
-## 同步证书到 cdn
+## 同步证书到 cdn / ecdn  
 
 ```
 # 编译可执行文件
-make cert-sync-cdn
+make cert-sync
 
 # 或者也可以直接 build
-# go build -o bin/cert-sync-cdn src/cmd/certificate-sync/cdn.go
+# go build -o bin/cert-sync src/cmd/certificate-sync/main.go
 
 # 同步
-{DIR}/bin/cert-sync-cdn --group=test
+{DIR}/bin/cert-sync --group=test
 
 ```
 
 ### acme.sh
 
 ```
-acme.sh --issue -d example.com --renew-hook "{DIR}/bin/cert-sync-cdn --group=test" # test对应配置的分组
+acme.sh --issue -d example.com --renew-hook "{DIR}/bin/cert-sync --group=test" # test对应配置的分组
 ```
 
 注意替换可执行文件完整路径
-
-## 同步证书到 ecdn
-
-```
-# 编译可执行文件
-make cert-sync-ecdn
-
-# 同步
-{DIR}/bin/cert-sync-ecdn --group=wildcard
-
-```
 
 ## 重建 cvm
 

@@ -1,10 +1,6 @@
-cert-sync-cdn:
-	go build -o bin/cert-sync-cdn src/cmd/certificate-sync/cdn.go
-	chmod +x bin/cert-sync-cdn
-
-cert-sync-ecdn:
-	go build -o bin/cert-sync-ecdn src/cmd/certificate-sync/ecdn.go
-	chmod +x bin/cert-sync-ecdn
+cert-sync:
+	go build -o bin/cert-sync src/cmd/certificate-sync/main.go
+	chmod +x bin/cert-sync
 
 cvm-renew:
 	go build -o bin/cvm-renew src/cmd/cvm-reinstall/main.go

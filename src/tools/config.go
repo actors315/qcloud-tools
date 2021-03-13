@@ -12,6 +12,7 @@ import (
 )
 
 type CertItem struct {
+	Product        string `yaml:"product"`
 	Domain         string `yaml:"domain"`
 	PublicKeyPath  string `yaml:"publicKeyPath"`
 	PrivateKeyPath string `yaml:"privateKeyPath"`
