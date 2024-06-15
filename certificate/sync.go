@@ -132,6 +132,7 @@ func (sync LBSync) UpdateCredential() bool {
 	request := ssl.NewUpdateCertificateInstanceRequest()
 
 	request.OldCertificateId = common.StringPtr(certId)
+	request.ResourceTypes = common.StringPtrs([]string{ "clb", "tke" })
 	request.ResourceTypesRegions = []*ssl.ResourceTypeRegions {
 		&ssl.ResourceTypeRegions {
 			ResourceType: common.StringPtr("clb"),
