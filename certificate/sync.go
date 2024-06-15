@@ -7,8 +7,8 @@ import (
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
-	"time"
 	ssl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
+	"time"
 )
 
 type ISync interface {
@@ -126,7 +126,7 @@ func (sync LBSync) UpdateCredential() bool {
 		return false
 	}
 
-	cpf.HttpProfile.Endpoint = "clb.tencentcloudapi.com"
+	cpf.HttpProfile.Endpoint = "ssl.tencentcloudapi.com"
 	sslClient, _ := ssl.NewClient(credential, sync.Region, cpf)
 
 	request := ssl.NewUpdateCertificateInstanceRequest()
