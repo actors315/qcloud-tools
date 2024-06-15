@@ -131,6 +131,14 @@ func (sync LBSync) UpdateCredential() bool {
 
 	request := ssl.NewUpdateCertificateInstanceRequest()
 
+	params := "{\"CertificatePublicKey\":\"%s\",\"CertificatePrivateKey\":\"%s\"}"
+	params = fmt.Sprintf(params, sync.PublicKeyData, sync.PrivateKeyData)
+
+	err := request.FromJsonString(params)
+	if err != nil {
+		panic(err)
+	}
+
 	request.OldCertificateId = common.StringPtr(certId)
 	request.ResourceTypes = common.StringPtrs([]string{ "clb", "tke" })
 	request.ResourceTypesRegions = []*ssl.ResourceTypeRegions {
@@ -143,8 +151,6 @@ func (sync LBSync) UpdateCredential() bool {
 			Regions: common.StringPtrs([]string{ sync.Region }),
 		},
 	}
-	request.CertificatePublicKey = common.StringPtr(sync.PublicKeyData)
-	request.CertificatePrivateKey = common.StringPtr(sync.PrivateKeyData)
 	request.Repeatable = common.BoolPtr(true)
 
 	// 返回的resp是一个UpdateCertificateInstanceResponse的实例，与请求对象对应
