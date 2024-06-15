@@ -134,7 +134,7 @@ func (sync LBSync) UpdateCredential() bool {
 	params := "{\"CertificatePublicKey\":\"%s\",\"CertificatePrivateKey\":\"%s\"}"
 	params = fmt.Sprintf(params, sync.PublicKeyData, sync.PrivateKeyData)
 
-	err := request.FromJsonString(params)
+	err = request.FromJsonString(params)
 	if err != nil {
 		panic(err)
 	}
