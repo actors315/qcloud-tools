@@ -8,6 +8,7 @@ import (
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	"time"
+	ssl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
 )
 
 type ISync interface {
@@ -125,15 +126,28 @@ func (sync LBSync) UpdateCredential() bool {
 		return false
 	}
 
-	request := clb.NewReplaceCertForLoadBalancersRequest()
-	params := "{\"OldCertificateId\":\"%s\",\"Certificate\":{\"CertName\":\"%s\",\"CertContent\":\"%s\",\"CertKey\":\"%s\"}}"
-	params = fmt.Sprintf(params, certId, sync.CertName+time.Now().Format("2006-01-02"), sync.PublicKeyData, sync.PrivateKeyData)
-	err = request.FromJsonString(params)
-	if err != nil {
-		panic(err)
-	}
+	cpf.HttpProfile.Endpoint = "clb.tencentcloudapi.com"
+	sslClient, _ := ssl.NewClient(credential, sync.Region, cpf)
 
-	response, err := client.ReplaceCertForLoadBalancers(request)
+	request := ssl.NewUpdateCertificateInstanceRequest()
+
+	request.OldCertificateId = common.StringPtr(certId)
+	request.ResourceTypesRegions = []*ssl.ResourceTypeRegions {
+		&ssl.ResourceTypeRegions {
+			ResourceType: common.StringPtr("clb"),
+			Regions: common.StringPtrs([]string{ sync.Region }),
+		},
+		&ssl.ResourceTypeRegions {
+			ResourceType: common.StringPtr("tke"),
+			Regions: common.StringPtrs([]string{ sync.Region }),
+		},
+	}
+	request.CertificatePublicKey = common.StringPtr(sync.PublicKeyData)
+	request.CertificatePrivateKey = common.StringPtr(sync.PrivateKeyData)
+	request.Repeatable = common.BoolPtr(true)
+
+	// 返回的resp是一个UpdateCertificateInstanceResponse的实例，与请求对象对应
+	response, err := sslClient.UpdateCertificateInstance(request)
 	if _, ok := err.(*errors.TencentCloudSDKError); ok {
 		fmt.Println("An API error has returned: ", err)
 	}
@@ -145,3 +159,5 @@ func (sync LBSync) UpdateCredential() bool {
 
 	return true
 }
+
+
