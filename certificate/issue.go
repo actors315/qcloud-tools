@@ -14,13 +14,13 @@ import (
 )
 
 type IssueSync struct {
-	Id                           uint64
-	SecretId, SecretKey          string
-	CdnType                      string `default:"cdn"`
-	CdnDomain                    string
-	LoadBalancerId, CertName, Region     string
-	IssueId                      uint64 `default:"0"`
-	LastIssueTime, LastCheckTime uint
+	Id                               uint64
+	SecretId, SecretKey              string
+	CdnType                          string `default:"cdn"`
+	CdnDomain                        string
+	LoadBalancerId, CertName, Region string
+	IssueId                          uint64 `default:"0"`
+	LastIssueTime, LastCheckTime     uint
 }
 
 type IssueInfo struct {
@@ -110,7 +110,7 @@ func (issue *IssueSync) IssueCertByScript() bool {
 	fmt.Println("issue result", content)
 
 	privateKeyRegexp, _ := regexp.Compile(`Your cert key is in: (.*\/\.acme\.sh\/.*[\S])`)
-	publicKeyRegexp, _ := regexp.Compile(`And the full chain certs is there: (.*\/\.acme\.sh\/.*[\S])`)
+	publicKeyRegexp, _ := regexp.Compile(`And the full-chain cert is in: (.*\/\.acme\.sh\/.*[\S])`)
 
 	var regexpResult []string
 	regexpResult = privateKeyRegexp.FindStringSubmatch(content)
@@ -171,9 +171,9 @@ func (issue *IssueSync) IssueCertByScript() bool {
 	switch issue.CdnType {
 	case "lb":
 		syncInstance = LBSync{
-			Sync:   sync,
+			Sync:           sync,
 			LoadBalancerId: issue.LoadBalancerId,
-			CertName: issue.CertName,
+			CertName:       issue.CertName,
 		}
 	default:
 		syncInstance = CdnSync{sync}
@@ -203,9 +203,9 @@ func (issue *IssueSync) IssueCertByHistory() (bool, uint) {
 	switch issue.CdnType {
 	case "lb":
 		syncInstance = LBSync{
-			Sync:   sync,
+			Sync:           sync,
 			LoadBalancerId: issue.LoadBalancerId,
-			CertName: issue.CertName,
+			CertName:       issue.CertName,
 		}
 	default:
 		syncInstance = CdnSync{sync}
