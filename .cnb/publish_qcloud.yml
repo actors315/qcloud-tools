@@ -1,0 +1,40 @@
+master:
+  push:
+    - name: push自动发布
+      stages:
+        - name: trigger by push
+          type: cnb:apply
+          options:
+            title: 触发发布流水线-push
+            event: web_trigger_deploy
+            sync: false
+            continueOnBuildError: false
+  web_trigger_deploy:
+    - services:
+        - docker
+      git:
+        enable: true
+      imports: 
+        - https://cnb.cool/smartworkflow/environment/-/blob/main/qcloud-tools-release/cnb_envs.yml
+        - https://cnb.cool/smartworkflow/environment/-/blob/main/qcloud-tools-release/qcloud_envs.yml
+      stages:
+        - name: fetch code
+          script:
+            - git clone -b main https://cnb.cool/actors315/qcloud-tools.git build
+        - name: docker build
+          script:
+            - docker login docker.cnb.cool -u cnb -p ${CNB_TOKEN}
+            - docker build -t docker.cnb.cool/actors315/qcloud-tools:${CNB_BUILD_ID} -f build/Dockerfile .
+            - docker push docker.cnb.cool/actors315/qcloud-tools:${CNB_BUILD_ID}
+        - name: 发布到 tke
+          image: tencentcom/deploy-to-tke
+          settings:
+            secret_id: ${QCLOUD_SECRET_ID}
+            secret_key: ${QCLOUD_SECRET_KEY}
+            region: ap-guangzhou
+            cluster_id: cls-1coqvnh4
+            namespace: oms
+            workload_kind: deployment
+            workload_name: cert-monitor
+            container_names: cert-monitor
+            container_images: docker.cnb.cool/actors315/qcloud-tools:${CNB_BUILD_ID}

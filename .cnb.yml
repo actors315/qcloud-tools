@@ -1,0 +1,2 @@
+include:
+  - .cnb/publish_qcloud.yml
