@@ -1,13 +1,12 @@
 branch:
-    - buttons:
+  - reg: ^main$
+    buttons:
       - name: 发布
         description: 执行发布事件
         event: web_trigger_deploy
-        sync: false
         permissions:
           roles:
             - owner
             - master
           users:
             - actors315
-    

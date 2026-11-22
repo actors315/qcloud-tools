@@ -1,4 +1,4 @@
-master:
+main:
   push:
     - name: push自动发布
       stages:
@@ -6,15 +6,15 @@ master:
           type: cnb:apply
           options:
             title: 触发发布流水线-push
-            event: web_trigger_deploy
-            sync: false
+            event: api_trigger_deploy
+            sync: true
             continueOnBuildError: false
-  web_trigger_deploy:
+  web_trigger_deploy: &deploy_pipeline
     - services:
         - docker
       git:
         enable: true
-      imports: 
+      imports:
         - https://cnb.cool/smartworkflow/environment/-/blob/main/qcloud-tools-release/cnb_envs.yml
         - https://cnb.cool/smartworkflow/environment/-/blob/main/qcloud-tools-release/qcloud_envs.yml
       stages:
@@ -38,3 +38,4 @@ master:
             workload_name: cert-monitor
             container_names: cert-monitor
             container_images: docker.cnb.cool/actors315/qcloud-tools:${CNB_BUILD_ID}
+  api_trigger_deploy: *deploy_pipeline
