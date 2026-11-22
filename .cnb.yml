@@ -1,2 +1,3 @@
-include:
-  - .cnb/publish_qcloud.yml
+# 不支持部署到 tke crontab，先屏蔽下
+#include:
+#  - .cnb/publish_qcloud.yml
