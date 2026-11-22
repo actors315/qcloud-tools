@@ -12,20 +12,14 @@ main:
   web_trigger_deploy: &deploy_pipeline
     - services:
         - docker
-      git:
-        enable: true
       imports:
         - https://cnb.cool/smartworkflow/environment/-/blob/main/qcloud-tools-release/cnb_envs.yml
         - https://cnb.cool/smartworkflow/environment/-/blob/main/qcloud-tools-release/qcloud_envs.yml
       stages:
-        - name: fetch code
+        - name: 构建并推送镜像
           script:
-            - git clone -b main https://cnb.cool/actors315/qcloud-tools.git build
-        - name: docker build
-          script:
-            - docker login docker.cnb.cool -u cnb -p ${CNB_TOKEN}
-            - docker build -t docker.cnb.cool/actors315/qcloud-tools:${CNB_BUILD_ID} -f build/Dockerfile .
-            - docker push docker.cnb.cool/actors315/qcloud-tools:${CNB_BUILD_ID}
+            - docker build -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:${CNB_COMMIT} .
+            - docker push ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:${CNB_COMMIT}
         - name: 发布到 tke
           image: tencentcom/deploy-to-tke
           settings:
@@ -33,9 +27,9 @@ main:
             secret_key: ${QCLOUD_SECRET_KEY}
             region: ap-guangzhou
             cluster_id: cls-1coqvnh4
-            namespace: oms
-            workload_kind: deployment
+            namespace: cert-monitor
+            workload_kind: cronjob
             workload_name: cert-monitor
             container_names: cert-monitor
-            container_images: docker.cnb.cool/actors315/qcloud-tools:${CNB_BUILD_ID}
+            container_images: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:${CNB_COMMIT}
   api_trigger_deploy: *deploy_pipeline
